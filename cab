@@ -1,0 +1,450 @@
+#include <iostream>
+#include<process.h>
+// C++ code to find cabs nearby
+#include <bits/stdc++.h>
+using namespace std;
+
+// Latitude of customer who needs a cab.
+#define lat1d 12.9611159
+
+// Longitude of customer who needs a cab.
+#define lon1d 77.6362214
+
+#define pi 3.14159265358979323846
+#define earth_radius 6371.0
+
+class customer1
+{
+
+    char phone_no[11];
+    char user_name[20];
+    string email;
+
+protected:
+    char name[20];
+    float price;
+    int pooling;
+    char destination[50];
+public :
+     customer1()
+     {
+         strcpy(name,"abcdef");
+    strcpy(phone_no,"0");
+            strcpy(user_name,"acs@287");
+             email="acs287@gmail.com";
+              strcpy(destination,"delhi technological university");
+              pooling=1;
+              price=320;
+     }
+      customer1(char x[],char number[],char user[],char g[],string e,int p,float pric)
+     {
+         strcpy(name,x);
+    strcpy(phone_no,number);
+            strcpy(user_name,user);
+             email=e;
+              strcpy(destination,g);
+              pooling=p;
+              price=pric;
+     }
+
+    void input()
+    {
+        cout<<"\n name : ";
+        cin>>name;
+        cout<<"\n phone number : ";
+        cin>>phone_no;
+        cout<<"\n user name : ";
+        cin>>user_name;
+        cout<<"\n email : ";
+        cin>>email;
+        cout<<"\n destination : ";
+        cin>>destination;
+        cout<<"\n Do you want to do car pooling \n 1 yes \n 2 no \n enter your choice : ";
+        cin>>pooling;
+    }
+    void print()
+    {
+        cout<<"\n name : "<<name;
+        cout<<"\n phone number : "<<phone_no;
+        cout<<"\n user name : "<<user_name;
+        cout<<"\n email : "<<email;
+        cout<<"\n destination : "<<destination;
+        if(pooling==1)
+        {
+            cout<<"\n carpooling ";
+        }
+        else{
+        cout<<"\n no carpooling ";
+        }
+        cout<<"\n price : "<<price;
+    }
+    void user_name_change(char user_name[20])
+    {
+        user_name=user_name;
+    }
+};
+class customer2
+{
+
+    char phone_no[10];
+    char user_name[20];
+    string email;
+
+protected:
+    float price;
+    char name[20];
+    int pooling;
+    char destination[50];
+public :
+
+     customer2(char x[],char number[],char user[],char g[],string e,int p,float pric)
+     {
+         strcpy(name,x);
+    strcpy(phone_no,number);
+            strcpy(user_name,user);
+             email=e;
+              strcpy(destination,g);
+              pooling=p;
+              price=pric;
+     }
+      customer2()
+     {
+         pooling=1;
+         strcpy(name,"abc");
+    strcpy(phone_no,"0123");
+            strcpy(user_name,"acs@287");
+             email="acs287@gmail.com";
+              strcpy(destination,"delhi technological university");
+     }
+    void input()
+    {
+        cout<<"\n customer 2";
+        cout<<"\n name : ";
+        cin>>name;
+        cout<<"\n phone number : ";
+        cin>>phone_no;
+        cout<<"\n user name : ";
+        cin>>user_name;
+        cout<<"\n email : ";
+        cin>>email;
+        cout<<"\n destination : ";
+        cin>>destination;
+        cout<<"\n Do you want to do car pooling \n 1 yes \n 2 no \n enter your choice : ";
+        cin>>pooling;
+    }
+    void print()
+    {
+        cout<<"\n name : "<<name;
+        cout<<"\n phone number : "<<phone_no;
+        cout<<"\n user name : "<<user_name;
+        cout<<"\n email : "<<email;
+        cout<<"\n destination : "<<destination;
+        if(pooling==1)
+        {
+            cout<<"\n carpooling ";
+        }
+        else{
+        cout<<"\n no carpooling ";
+        }
+        cout<<"\n price : "<<price;
+    }
+};
+class carpooling:public customer1,public customer2
+{
+    float price;
+    int answer;
+public :
+    carpooling():customer1("sweety","9968255981","sweety@59","narela","swee34@gmail.com",1,200),customer2("palak","9968255981","pal@59","narela","pal@gmail.com",1,200)
+    {
+
+    }
+    void input(customer1 &c1,customer2 &c2)
+    {
+        cout<<"\n would you like to do carpooling \n 1 yes \n 2 no ";
+        cin>>answer;
+        if(answer==1)
+        {
+            if(customer2::pooling==1 &&customer1::pooling==1)
+            {
+                cout<<"\n good choice !! ";
+                cout<<"\n you can do the carpolling !! \n name of the person with you :";
+                cout<<customer1::name;
+                cout<<"\n price : ";
+                cout<<customer1::price/2;
+            }
+            else{
+                cout<<"\n not possible !!! ";
+            }
+        }
+         else{
+                cout<<"\n not possible !!! ";
+            }
+    }
+
+};
+ifstream customer_list ("customers.json");
+ofstream out ("answer.json");
+
+// Function to convert degree to radian.
+double degtorad(double deg)
+{
+    return ( deg * pi / 180);
+}
+
+// Function to calculate distance
+// between 2 given locations
+// using Great Circle Distance Formula.
+double distanceEarth(double lat2d, double lon2d)
+{
+    double lat1, lon1, lat2, lon2,
+           delta_lon, central_ang;
+
+    lat1 = degtorad(lat1d);
+    lon1 = degtorad(lon1d);
+    lat2 = degtorad(lat2d);
+    lon2 = degtorad(lon2d);
+
+    delta_lon = lon2 - lon1;
+
+    // great circle distance formula.
+    central_ang = acos ( sin(lat1) *
+                  sin(lat2) + cos(lat1) *
+                  cos(lat2) * cos(delta_lon) );
+
+    return (earth_radius * central_ang);
+}
+
+// Structure which contains data and
+// functions for accessing and processing
+// data from the given customers.json file.
+struct json
+{
+    /* i and j are used to access various
+    elements of the char arrays. x is used
+    to measure the size of the element of
+    latitude_as_string array. y is used to
+    measure the size of the element of
+    longitude_as_string array. m is used
+    to measure the size of the element
+    of id_as_string array. n is used to
+    measure the size of the element of
+    name array. f keeps count of " " "
+    symbol. fi keeps count of " : " symbol.
+    */
+    long long int length, i, j, x, y, m,
+                  n, f, fi, id[100000];
+
+    char latitude_as_string[1000],
+         longitude_as_string[1000],
+         id_as_string[1000], name[1000];
+
+    double lat2d, lon2d;
+
+    // To get each line of customers.json
+    // file as string.
+    string line;
+
+    // Function to check whether distance between
+    // 2 points is less than 50km or not.
+    void distance_calculator()
+    {
+        if (distanceEarth(lat2d, lon2d) <= 50.0000)
+        {
+            // Converting id to int format.
+            id[i] = atoll(id_as_string);
+            i++;
+            out << "{\"user_id\": " << id[i - 1] <<
+                ", \"name\": " << name << "}" << endl;
+        }
+    }
+
+    // Function to read various attributes
+    // like latitude, longitude, name , id,
+    // etc, from customers.json file. simplistic
+    // approach is used to get JSON attributes.
+    void json_parser()
+    {
+        if (customer_list.is_open())
+        {
+
+            while (getline(customer_list, line))
+            {
+
+                f = 0; x = 0; y = 0; fi = 0; m = 0, n = 0;
+                length = line.size();
+
+                for (j = 0; j < length; j++)
+                {
+
+                    if (line[j] == '"')
+                        f++;
+
+                    else if (line[j] == ':')
+                        fi++;
+
+                    // To get latitude of the location.
+                    if (f == 3)
+                    {
+                        j++;
+
+                        while (line[j] != '"')
+                        {
+                            latitude_as_string[x] = line[j];
+                            x++; j++;
+                        }
+
+                        j--; latitude_as_string[x] = '\0';
+                    }
+
+                    // To get longitude of the location.
+                    else if (f == 13)
+                    {
+                        j++;
+
+                        while (line[j] != '"')
+                        {
+                            longitude_as_string[y] = line[j];
+                            y++; j++;
+                        }
+
+                        j--; longitude_as_string[y] = '\0';
+                    }
+
+                    // To get id of the friend.
+                    if (fi == 2)
+                    {
+                        j += 2;
+
+                        while (line[j] != ',')
+                        {
+                            id_as_string[m] = line[j];
+                            m++; j++;
+                        }
+
+                        j--; id_as_string[m] = '\0';
+                        fi++;
+                    }
+
+                    // To get name of the friend.
+                    else if (fi == 4)
+                    {
+                        j += 2;
+
+                        while (line[j] != ',')
+                        {
+                            name[n] = line[j];
+                            n++; j++;
+                        }
+
+                        j--; name[n] = '\0';
+                        fi++; f += 2;
+                    }
+                }
+
+                // Converting latitude and longitude
+                // in string to float.
+                lat2d = atof(latitude_as_string);
+                lon2d = atof(longitude_as_string);
+                distance_calculator();
+            }
+        }
+
+
+
+        // closing stream of customer's file.
+        customer_list.close();
+
+        // closing stream of answer's file.
+        out.close();
+    }
+};
+
+int main()
+{
+    // Creating o    bject of the structure json
+    json obj;
+
+    // To read customers.json file.
+    obj.json_parser();
+
+    int ch;
+    customer1 c1;
+    customer2 c2;
+    carpooling c;
+    int choice;
+    cout<<"\n\n\n\t\t\t\t welcome to our cab service ";
+    cout<<"\n\t\t\t\t --------------------------";
+    cout<<"\n\n\n 1 carpooling ";
+    cout<<"\n 2 about our service ";
+    cout<<"\n 3 cab price ";
+    cout<<"\n 4 changing a user name  ";
+    cout<<"\n 5 details  ";
+    cout<<"\n 6 no of person in a cab ";
+    cout<<"\n 7 booking a cab ";
+    cout<<"\n 8 exit ";
+    do
+    {
+    cout<<"\n\n\t\t\t enter your choice : ";
+    cin>>choice;
+    switch(choice)
+    {
+    case 1:
+        {
+
+
+             c.input(c1,c2);
+             break;
+        }
+    case 2:
+        {
+             cout<<" it is an Indian transportation network company (TNC) offering services that include peer-to-peer ridesharing, ride service hailing, taxi and food delivery. " ;
+             break;
+        }
+
+   case 3:
+        {
+             cout<<" for every 5km rupees 200 ";
+             break;
+
+        }
+    case 4:
+        {
+              char user_name[20];
+              cout<<"\n enter new user name ";
+              cin>>user_name;
+              c1.user_name_change(user_name);
+              break;
+        }
+    case 5:
+        {
+              c1.print();
+              break;
+        }
+    case 6:
+        {
+              cout<<"not more than 4 people at a time ";
+              break;
+        }
+    case 7:
+        {
+           c1.input();
+              break;
+        }
+    case 8:
+        {
+             exit(0);
+             break;
+        }
+    default:
+        {
+             cout<<" invaild ";
+             break;
+        }
+    }
+    cout<<"\n\n\t\t Do you want to run again \n 1 yes \n 2 no \n enter your choice : ";
+    cin>>ch;
+    }while(ch==1);
+
+    return 0;
+}
+
